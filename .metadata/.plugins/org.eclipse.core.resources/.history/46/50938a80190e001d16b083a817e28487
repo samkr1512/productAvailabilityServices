@@ -1,0 +1,100 @@
+package com.example.demo.controller;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.example.demo.model.ProductDetails;
+import com.example.demo.repository.ProductDetailsRepository;
+
+public class ProductDetailsController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductAvailabilityServicesController.class);
+
+	@Autowired
+	private ProductDetailsRepository productDetailsRepository;
+
+	@GetMapping(path = "/productDetails/{productName}")
+	@ResponseStatus(HttpStatus.OK)
+	public List<ProductDetails> getProductDetails(
+			@PathVariable(name = "productName", required = true) String productName) {
+		LOGGER.info("Entering getProductDetails productName={}", productName);
+		return productDetailsRepository.findProductDetailsByName(productName);
+
+	}
+
+	@GetMapping(path = "/productDetailsLocal/{productName}")
+	@ResponseStatus(HttpStatus.OK)
+	public List<ProductDetails> getProductDetailsLocal(
+			@PathVariable(name = "productName", required = true) String productName) {
+		LOGGER.info("Entering getProductDetailsLocal productName={}", productName);
+
+		return setProductDetails();
+
+	}
+
+	@PostMapping(path = "/productDetails")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void insertProductDetails(@RequestBody ProductDetails productDetails) {
+		LOGGER.debug("Entering insertProductDetials productDetails={}", productDetails);
+
+		productDetailsRepository.save(productDetails);
+
+		LOGGER.debug("Exiting insertProductDetials");
+
+	}
+
+	@PutMapping(path = "/productDetails")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void updateProductDetails(@RequestBody ProductDetails productDetails) {
+		LOGGER.debug("Entering updateProductDetails productDetails={}", productDetails);
+
+		productDetailsRepository.save(productDetails);
+
+		LOGGER.debug("Exiting updateProductDetails");
+	}
+
+	@DeleteMapping(path = "/productDetails/{productId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteProductDetails(@PathVariable(name = "productId", required = true) BigInteger productId) {
+		LOGGER.debug("Entering deleteProductDetails productId={}", productId);
+
+		productDetailsRepository.deleteById(productId);
+
+		LOGGER.debug("Exiting deleteProductDetails");
+	}
+
+	public static Logger getLogger() {
+		return LOGGER;
+	}
+
+	public List<ProductDetails> setProductDetails() {
+
+		ProductDetails product = new ProductDetails();
+		List<ProductDetails> products = new ArrayList<>();
+
+		product.setProductId(BigInteger.valueOf(1));
+		product.setProductName("shoe");
+		product.setProductDesc("heel");
+		product.setProductSku("010-123-K11-1236");
+		product.setProductOnline(Boolean.valueOf(false));
+
+		products.add(product);
+
+		return products;
+
+	}
+
+}

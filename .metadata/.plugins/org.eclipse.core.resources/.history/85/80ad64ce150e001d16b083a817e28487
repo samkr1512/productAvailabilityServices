@@ -1,0 +1,63 @@
+package com.example.demo.controller;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.example.demo.model.LocationProductMapping;
+import com.example.demo.model.ProductDetails;
+import com.example.demo.repository.LocationProductMappingRepository;
+import com.example.demo.repository.ProductDetailsRepository;
+
+public class ProductAvailabilityServicesController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductAvailabilityServicesController.class);
+
+	@Autowired
+	private ProductDetailsRepository productDetailsRepository;
+
+	@Autowired
+	private LocationProductMappingRepository locationProductMappingRep;
+
+	@GetMapping(path = "/productAvailability/{locationId}")
+	@ResponseStatus(HttpStatus.OK)
+	public List<ProductDetails> getProductAvailability(@PathVariable(name = "locationId") BigInteger locationId) {
+		LOGGER.info("Entering getProductAvailability locationId={}", locationId);
+
+		List<ProductDetails> products = new ArrayList<>();
+
+		List<LocationProductMapping> locationProductMapping = locationProductMappingRep
+				.findLocationProductMappingById(locationId);
+
+		List<ProductDetails> productsForOnline = productDetailsRepository.findProductsOnline();
+
+		for (LocationProductMapping locationProduct : locationProductMapping) {
+
+			products = productDetailsRepository.findProductDetailsById(locationProduct.getLocationId());
+
+		}
+
+		// TODO fix this
+		// List<ProductDetails> products = locationProductMapping.stream()
+		// .map(t -> productDetailsRepository.findProductDetailsById(t.getLocationId()))
+		// .collect(Collectors.toList());
+
+		products.addAll(productsForOnline);
+		
+		return products;
+
+	}
+
+	public static Logger getLogger() {
+		return LOGGER;
+	}
+
+}

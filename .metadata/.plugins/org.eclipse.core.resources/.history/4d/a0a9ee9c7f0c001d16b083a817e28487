@@ -1,0 +1,6 @@
+spring:
+  profiles: dev
+  cloud:
+    config:
+      label: develop
+---

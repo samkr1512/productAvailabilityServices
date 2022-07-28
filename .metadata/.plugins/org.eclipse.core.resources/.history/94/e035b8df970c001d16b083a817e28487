@@ -1,0 +1,39 @@
+package com.example.demo.controller;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.example.demo.model.ProductDetails;
+import com.example.demo.repository.ProductDetailsRepository;
+
+public class ProductAvailabilityServicesController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProductAvailabilityServicesController.class);
+
+	@Autowired
+	private ProductDetailsRepository productDetailsRepository;
+
+	@Transactional
+	@GetMapping(path = "/productDetails/{productName}")
+	@ResponseStatus(HttpStatus.OK)
+	public List<ProductDetails> getProductDetails(
+			@PathVariable(name = "productName", required = true) String productName) {
+		LOGGER.debug("Entering getProductDetails productName={}", productName);
+		return productDetailsRepository.findProductDetailsByName(productName);
+
+	}
+
+	public static Logger getLogger() {
+		return LOGGER;
+	}
+
+}

@@ -1,0 +1,11 @@
+root-path: /productAvailabilityServices
+server:
+  servlet:
+    context-path: /productAvailabilityServices
+document:
+  contact-email: "samkassing@gmail.com"
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sys
+    username: root
+    password: "!West53Ter"
